@@ -47,16 +47,17 @@ def test_create_user_with_valid_email():
 
 def test_create_user_with_invalid_email():
     '''Создание пользователя с почтой, которую использует другой пользователь'''
-    response = client.post("/api/v1/user", json=users[0][1:])
+    response = client.post("/api/v1/user", json={ "name": users[0]["name"],
+                                                      "email": users[0]["email"]})
     assert response.status_code == 409
     assert response.json() == {"detail": "User with this email already exists"}
 
 def test_delete_user():
     '''Удаление пользователя'''
-    response = client.get("/api/v1/user", params={'email': users[2]['email']})
+    response = client.get("/api/v1/user", params={'email': users[1]['email']})
     assert response.status_code == 200
-    response = client.delete("/api/v1/user", params={'email': users[2]['email']})
+    response = client.delete("/api/v1/user", params={'email': users[1]['email']})
     assert response.status_code == 204
-    response = client.get("/api/v1/user", params={'email': users[2]['email']})
+    response = client.get("/api/v1/user", params={'email': users[1]['email']})
     assert response.status_code == 404
     assert response.json() == {"detail": "User not found"}
